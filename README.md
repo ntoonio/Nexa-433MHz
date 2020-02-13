@@ -1,10 +1,10 @@
 # RPi-433mhz
-A c++ library for controlling Nexa devices with the "self-learning" protocol.
+A c++ library for controlling Nexa devices with the "self-learning" protocol. Can be used on both an Arduino and a Raspberry Pi (using wiringPi).
 
 The library can turn on and off a device or a whole group, as well as dim a device to a specified level.
 
 ## Usage
-	#include "NexaSender/NexaSender.h"
+	#include "NexaSender.h"
 
 	int main() {
 		// Set up the sender class
