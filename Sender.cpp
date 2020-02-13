@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 	int group = atoi(argv[3]);
 	int device = atoi(argv[4]);
 
-	printf("Client id: %i\nMode: %i\nnGroup: %i\nDevice: %i\n", clientId, mode, group, device);
+	printf("Client id: %i\nMode: %i\nGroup: %i\nDevice: %i\n", clientId, mode, group, device);
 
 	NexaSender sender(0, clientId);
 	
@@ -54,6 +54,9 @@ int main(int argc, char** argv) {
 	}
 	else if (mode == 1) {
 		int dimLevel = atoi(argv[5]);
+
+		printf("Dimming device %i:%i to dim level %i\n", group, device, dimLevel);
+
 		sender.dimDevice(dimLevel, group, device);
 	}
 	else if (mode == 2) {
