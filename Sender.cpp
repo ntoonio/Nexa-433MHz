@@ -2,30 +2,9 @@
 
 #include "NexaSender/NexaSender.h"
 
-int charToInt(char c) {
-	return (int)c - 48;
-}
-
-void disco(NexaSender sender, int group, long device) {
-	while (true) {
-		int n = 0 + ( std::rand() % ( 16 - 0 + 1 ) );
-		printf("- %i\n", n);
-		sender.dimDevice(n, group, device);
-		delayMicroseconds(2000000);
-	}
-}
-
-void step(NexaSender sender, int group, long device) {
-	for (int i = 0; i < 16; i++) {
-		printf("- %i\n", i);
-		sender.dimDevice(i, group, device);
-		delayMicroseconds(2000000);
-	}
-}
-
 int main(int argc, char** argv) {
 	
-	if (argc < 4) {
+	if (argc < 5) {
 		printf("Usage: $ nexasender <clientId> <mode> <group> <device>\n");
 		printf("\tmode = 0 - on/off mode <on/off>\n");
 		printf("\tmode = 1 - dim mode <dim-level 1-16>\n");
@@ -62,9 +41,12 @@ int main(int argc, char** argv) {
 	else if (mode == 2) {
 		bool dir = atoi(argv[5]);
 
+		// * Readability is boring *
+
 		printf("Fading from %i to %i\n", (dir ? 1 : 16), (dir ? 16 : 1));
 
-		for (int i = (dir ? 15 : 0); (dir ? i > 0 : i < 15); (dir ? i-- : i++)) {
+		for (int i = (dir ? 1 : 16); (dir ? i <= 16 : i >= 1); (dir ? i++ : i--)) {
+			printf("Set dim level to %i\n", i);
 			sender.dimDevice(i, group, device);
 			delayMicroseconds(2000000);
 		}

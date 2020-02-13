@@ -1,22 +1,17 @@
 #include "NexaSender.h"
 
-#include <iostream>
 #include <array>
-#include <algorithm>
 #include <wiringPi.h>
 
 NexaSender::NexaSender(int pinId, unsigned long clientId) {
 	if (wiringPiSetup() != 0) {
-		printf("Couldn't set up wiringPi");
-		return;
+		throw std::runtime_error("Wiring Pi couldn't be set up");
 	}
 
-	_unitLength = 250;
+	_highLength = 250;
 	_longLowLength = 5 * 250;
 	_startLowLength = 10 * 250;
 	_endLowLength = 40 * 250;
-
-	_dimLevels = {16, 8, 12, 4, 14, 6, 10, 2, 15, 7, 11, 3, 13, 5, 9, 1};
 
 	this->pinId = pinId;
 	this->clientId = clientId;
@@ -68,13 +63,15 @@ void NexaSender::writeDestination(int group, int device) {
 
 void NexaSender::writeDimLevel(int dimLevel) {
 	if (dimLevel < 1 || dimLevel > 16) {
-		return;
+		throw std::out_of_range("Forbidden dim value. Must be 1-16"); // Input must be 1-16, but is used as 0-15
 	}
+	
+	int dim = 16 - dimLevel; // Invert dimLevel
 
 	// Convert the dim level and att it to the bits 32 - 35
 	int mask = 1;
 	for (int i = 0; i < 4; i++) {
-		_transmitData[35 - i] = ((dimLevel - 1) & mask) >= 1;
+		_transmitData[35 - i] = (dim & mask) >= 1;
 		mask <<= 1;
 	}
 }
@@ -114,25 +111,25 @@ void NexaSender::sendEnd() {
 // When we want to dim we send the group action as "11"
 // Named two just to match naming
 void NexaSender::sendTwo() {
-	sendPhysicalBit(_unitLength);
-	sendPhysicalBit(_unitLength);
+	sendPhysicalBit(_highLength);
+	sendPhysicalBit(_highLength);
 }
 
 // "1" is sent as "10"
 void NexaSender::sendOne() {
-	sendPhysicalBit(_unitLength);
+	sendPhysicalBit(_highLength);
 	sendPhysicalBit(_longLowLength);
 }
 
 // "0" is sent as "01"
 void NexaSender::sendZero() {
 	sendPhysicalBit(_longLowLength);
-	sendPhysicalBit(_unitLength);
+	sendPhysicalBit(_highLength);
 }
 
 void NexaSender::sendPhysicalBit(int length) {
 	digitalWrite(pinId, HIGH);
-	delayMicroseconds(_unitLength);
+	delayMicroseconds(_highLength);
 	digitalWrite(pinId, LOW);
 	delayMicroseconds(length);
 }

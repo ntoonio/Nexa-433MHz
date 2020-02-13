@@ -11,7 +11,7 @@ public:
 	void dimDevice(int level, int group, int device);
 
 private:
-	int _unitLength;
+	int _highLength;
 	int _longLowLength;
 	int _startLowLength;
 	int _endLowLength;
@@ -19,7 +19,6 @@ private:
 	int pinId;
 	unsigned long clientId;
 	std::array<bool, 32+4> _transmitData;
-	std::array<int, 16> _dimLevels;
 
 	void writeClientId(long clientId);
 	void writeGroupAction(bool groupAction);
