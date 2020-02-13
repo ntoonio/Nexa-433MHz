@@ -1,8 +1,18 @@
 #ifndef NS_h
 #define NS_h
 
+#if defined(RPI)
+#define ON_RPI 1
+#define TRANSMIT_DATA_DEF std::array<bool, 36> _transmitData
+
 #include <wiringPi.h>
 #include <array>
+#elif defined(ARDUINO) && ARDUINO >= 100
+#define ON_ARDUINO 1
+#define TRANSMIT_DATA_DEF bool _transmitData[36]]
+
+#include "arduino.h"
+#endif
 
 class NexaSender {
 public:
@@ -19,7 +29,7 @@ private:
 
 	int pinId;
 	unsigned long clientId;
-	std::array<bool, 32+4> _transmitData;
+	TRANSMIT_DATA_DEF;
 
 	void writeClientId(long clientId);
 	void writeGroupAction(bool groupAction);
@@ -38,4 +48,3 @@ private:
 };
 
 #endif
-

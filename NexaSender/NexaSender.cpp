@@ -1,12 +1,11 @@
 #include "NexaSender.h"
 
-#include <array>
-#include <wiringPi.h>
-
 NexaSender::NexaSender(int pinId, unsigned long clientId) {
+	#ifdef ON_RPI
 	if (wiringPiSetup() != 0) {
 		throw std::runtime_error("Wiring Pi couldn't be set up");
 	}
+	#endif
 
 	_highLength = 250;
 	_longLowLength = 5 * 250;
@@ -46,7 +45,7 @@ void NexaSender::turnGroup(bool mode, int group) {
 
 void NexaSender::writeClientId(long clientId) {
 	// Convert the client id to binary and add it to the 26 first bits
-	int mask = 1;
+	long mask = 1;
 	for (int i = 0; i < 26; i++) {
 		_transmitData[25 - i] = (clientId & mask) >= 1;
 		mask <<= 1;
@@ -65,7 +64,13 @@ void NexaSender::writeDestination(int group, int device) {
 	// Input must be 1-4, but is transmitted as 0-3
 
 	if (group < 1 || group > 4 || device < 1 || device > 4) {
+		#ifdef ON_RPI
 		throw std::out_of_range("Forbidden group or device value, must be 1-4");
+		#endif
+		#ifdef ON_ARDUINO
+		Serial.println("Forbidden group or device value, must be 1-4");
+		return;
+		#endif
 	}
 
 	// Invert for transmit
@@ -83,9 +88,15 @@ void NexaSender::writeDimLevel(int dimLevel) {
 	// Input must be 1-16, but is transmitted as 0-15
 
 	if (dimLevel < 1 || dimLevel > 16) {
+		#ifdef ON_RPI
 		throw std::out_of_range("Forbidden dim value. Must be 1-16");
+		#endif
+		#ifdef ON_ARDUINO
+		Serial.println("Forbidden dim value. Must be 1-16");
+		return;
+		#endif
 	}
-	
+
 	// Invert for transmit
 	int dim = 16 - dimLevel;
 
@@ -99,7 +110,7 @@ void NexaSender::writeDimLevel(int dimLevel) {
 
 void NexaSender::transmit(bool dim) {
 	int nrBits = dim ? 36 : 32;
-	
+
 	pinMode(pinId, OUTPUT);
 
 	for (int i = 0; i < 4; i++) {
@@ -154,4 +165,3 @@ void NexaSender::sendPhysicalBit(int length) {
 	digitalWrite(pinId, LOW);
 	delayMicroseconds(length);
 }
-

@@ -8,30 +8,29 @@ The library can turn on and off a device or a whole group, as well as dim a devi
 
 	int main() {
 		// Set up the sender class
-		
+
 		int pinId = 0; // Pin where the RF-transmitter is connected
 		long clientId = 12345678; // Number that represents this remote controller device
-		
+
 		NexaSender sender(pinId, clientId);
-		
+
 		// Turn on device 1 in group 1
-		
+
 		int group = 1;
 		int device = 1;
 		bool onoff = true;
-		
+
 		sender.turnDevice(onoff, group, device);
-		
+
 		// Dim device 1 in group 1 to 50%
-		
+
 		int dim = 8; // Value between 1-16, where 16 is bright
-		
+
 		sender.dimDevice(dim, group, device);
-		
+
 		// Turn on whole group 1
-		
-		// TODO: Not implemented!
-		// sender.turnGroup(mode, group);
+
+		sender.turnGroup(mode, group);
 	}
 
 ## License
