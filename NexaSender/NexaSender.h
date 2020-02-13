@@ -9,6 +9,7 @@ public:
 	NexaSender(int pinId, unsigned long clientId);
 	void turnDevice(bool mode, int group, int device);
 	void dimDevice(int level, int group, int device);
+	void turnGroup(bool mode, int group);
 
 private:
 	int _highLength;

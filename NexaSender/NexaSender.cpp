@@ -36,6 +36,14 @@ void NexaSender::turnDevice(bool mode, int group, int device) {
 	transmit(false);
 }
 
+void NexaSender::turnGroup(bool mode, int group) {
+	writeGroupAction(true);
+	writeMode(mode);
+	writeDestination(group, 1); // Device doesn't matter
+
+	transmit(false);
+}
+
 void NexaSender::writeClientId(long clientId) {
 	// Convert the client id to binary and add it to the 26 first bits
 	int mask = 1;
@@ -46,14 +54,24 @@ void NexaSender::writeClientId(long clientId) {
 }
 
 void NexaSender::writeGroupAction(bool groupAction) {
-	_transmitData[26] = !groupAction;
+	_transmitData[26] = !groupAction; // Invert for transmit
 }
 
 void NexaSender::writeMode(bool mode) {
-	_transmitData[27] = !mode;
+	_transmitData[27] = !mode; // Invert for transmit
 }
 
 void NexaSender::writeDestination(int group, int device) {
+	// Input must be 1-4, but is transmitted as 0-3
+
+	if (group < 1 || group > 4 || device < 1 || device > 4) {
+		throw std::out_of_range("Forbidden group or device value, must be 1-4");
+	}
+
+	// Invert for transmit
+	group = 4 - group;
+	device = 4 - device;
+
 	_transmitData[28] = group & 10;
 	_transmitData[29] = group & 1;
 
@@ -62,11 +80,14 @@ void NexaSender::writeDestination(int group, int device) {
 }
 
 void NexaSender::writeDimLevel(int dimLevel) {
+	// Input must be 1-16, but is transmitted as 0-15
+
 	if (dimLevel < 1 || dimLevel > 16) {
-		throw std::out_of_range("Forbidden dim value. Must be 1-16"); // Input must be 1-16, but is used as 0-15
+		throw std::out_of_range("Forbidden dim value. Must be 1-16");
 	}
 	
-	int dim = 16 - dimLevel; // Invert dimLevel
+	// Invert for transmit
+	int dim = 16 - dimLevel;
 
 	// Convert the dim level and att it to the bits 32 - 35
 	int mask = 1;
