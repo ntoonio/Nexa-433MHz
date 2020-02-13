@@ -1,16 +1,16 @@
 # RPi-433mhz
 A c++ library for controlling Nexa devices with the "self-learning" protocol.
 
-The library can turn on and off a device or a whole group, as well as dim it to a specified value.
+The library can turn on and off a device or a whole group, as well as dim a device to a specified level.
 
 ## Usage
-  #include "NexaSender/NexaSender.h"
+	#include "NexaSender/NexaSender.h"
 
 	int main() {
 		// Set up the sender class
 		
-		int pinId = 0;
-		long clientId = 12345678;
+		int pinId = 0; // Pin where the RF-transmitter is connected
+		long clientId = 12345678; // Number that represents this remote controller device
 		
 		NexaSender sender(pinId, clientId);
 		
