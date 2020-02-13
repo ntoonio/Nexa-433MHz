@@ -9,7 +9,7 @@
 #include <array>
 #elif defined(ARDUINO) && ARDUINO >= 100
 #define ON_ARDUINO 1
-#define TRANSMIT_DATA_DEF bool _transmitData[36]]
+#define TRANSMIT_DATA_DEF bool _transmitData[36]
 
 #include "arduino.h"
 #endif

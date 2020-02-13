@@ -18,6 +18,14 @@ NexaSender::NexaSender(int pinId, unsigned long clientId) {
 	writeClientId(clientId);
 }
 
+void NexaSender::turnDevice(bool mode, int group, int device) {
+	writeGroupAction(false);
+	writeMode(mode);
+	writeDestination(group, device);
+
+	transmit(false);
+}
+
 void NexaSender::dimDevice(int dimLevel, int group, int device) {
 	writeGroupAction(false);
 	// The mode is set to "11" physical bits for dim - which is done at transmit
@@ -25,14 +33,6 @@ void NexaSender::dimDevice(int dimLevel, int group, int device) {
 	writeDimLevel(dimLevel);
 
 	transmit(true);
-}
-
-void NexaSender::turnDevice(bool mode, int group, int device) {
-	writeGroupAction(false);
-	writeMode(mode);
-	writeDestination(group, device);
-
-	transmit(false);
 }
 
 void NexaSender::turnGroup(bool mode, int group) {
